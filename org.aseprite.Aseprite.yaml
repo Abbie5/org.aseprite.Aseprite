@@ -1,0 +1,61 @@
+app-id: org.aseprite.Aseprite
+runtime: org.freedesktop.Platform
+runtime-version: '22.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.llvm16
+command: aseprite
+rename-desktop-file: aseprite.desktop
+rename-icon: aseprite
+finish-args:
+  - --share=network
+  - --socket=x11
+  - --share=ipc
+  - --device=dri
+  - --filesystem=home
+
+modules:
+  - name: libcxx
+    buildsystem: cmake-ninja
+    builddir: true
+    subdir: runtimes
+    config-opts:
+      - -DLLVM_ENABLE_RUNTIMES=libcxx;libcxxabi
+    sources:
+      - type: archive
+        url: https://github.com/llvm/llvm-project/releases/download/llvmorg-16.0.6/llvm-project-16.0.6.src.tar.xz
+        sha256: ce5e71081d17ce9e86d7cbcfa28c4b04b9300f8fb7e78422b1feb6bc52c3028e
+
+  - name: aseprite
+    buildsystem: cmake-ninja
+    builddir: true
+    build-options:
+      append-path: /usr/lib/sdk/llvm16/bin
+      prepend-ld-library-path: /usr/lib/sdk/llvm16/lib
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_C_COMPILER=clang
+      - -DCMAKE_CXX_COMPILER=clang++
+      - -DCMAKE_CXX_FLAGS:STRING=-stdlib=libc++ -nostdinc++ -nostdlib++ -isystem /app/include/c++/v1 -L /app/lib -Wl,-rpath,/app/lib -lc++
+      - -DCMAKE_EXE_LINKER_FLAGS:STRING=-stdlib=libc++ -nostdinc++ -nostdlib++ -isystem /app/include/c++/v1 -L /app/lib -Wl,-rpath,/app/lib -lc++
+      - -DLAF_BACKEND=skia
+      - -DSKIA_DIR=../skia
+      - -DSKIA_LIBRARY_DIR=../skia/out/Release-x64
+      - -DSKIA_LIBRARY=../skia/out/Release-x64/libskia.a
+#      - -DENABLE_STEAM=ON
+#      - -DENABLE_PSD=ON
+      - -DENABLE_DESKTOP_INTEGRATION=ON
+#      - -DENABLE_QT_THUMBNAILER=ON
+      - -Wno-dev
+    sources:
+      - type: archive
+        url: https://github.com/aseprite/aseprite/releases/download/v1.3-rc6/Aseprite-v1.3-rc6-Source.zip
+        sha256: 8912faafd1908bece8701de7290e435f502671dbec968e3696a5b6883e4c9ad3
+        strip-components: 0
+      - type: archive
+        url: https://github.com/aseprite/skia/releases/download/m102-861e4743af/Skia-Linux-Release-x64-libc++.zip
+        dest: skia
+        sha256: 66293c15aa773a96121afb01f09109d3e5d455a6fd51944e0bb8bdc0829913ea
+        strip-components: 0
+    post-install:
+      - install -Dm644 /app/share/aseprite/data/icons/ase64.png /app/share/icons/hicolor/64x64/apps/aseprite.png
