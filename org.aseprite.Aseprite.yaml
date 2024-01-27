@@ -49,8 +49,8 @@ modules:
       - -Wno-dev
     sources:
       - type: archive
-        url: https://github.com/aseprite/aseprite/releases/download/v1.3-rc6/Aseprite-v1.3-rc6-Source.zip
-        sha256: 8912faafd1908bece8701de7290e435f502671dbec968e3696a5b6883e4c9ad3
+        url: https://github.com/aseprite/aseprite/releases/download/v1.3.2/Aseprite-v1.3.2-Source.zip
+        sha256: 0246b18ff77d4c4e813c7f40207bfbd1387813b82d57900cde869dab370a26cc
         strip-components: 0
       - type: archive
         url: https://github.com/aseprite/skia/releases/download/m102-861e4743af/Skia-Linux-Release-x64-libc++.zip
