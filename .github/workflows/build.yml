@@ -1,0 +1,15 @@
+on:
+  - push
+  - pull_request
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:freedesktop-22.08
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v4
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          manifest-path: org.aseprite.Aseprite.yaml
